@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RaceBox Web QStart (iPhone GPS Drag Timer)</title>
+  <title>RaceBox Trigger C</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
     body { margin:0; background:#0b0f14; color:#e8eef6; }
@@ -11,13 +11,12 @@
     .topbar { display:flex; gap:10px; align-items:center; justify-content:space-between; }
     .tabs { display:flex; gap:10px; }
     .tab { padding:10px 12px; border-radius: 999px; background:#0f1620; border:1px solid #24344c; cursor:pointer; user-select:none; }
-    .tab.active { background:#2b8cff; color:#001425; border-color:#2b8cff; font-weight:800; }
+    .tab.active { background:#2b8cff; color:#001425; border-color:#2b8cff; font-weight:900; }
     .card { background:#121a24; border:1px solid #213044; border-radius: 14px; padding: 14px; margin: 12px 0; }
     h1 { font-size: 16px; margin: 0 0 10px; }
-    .grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
     .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
     button {
-      border:0; border-radius: 12px; padding: 12px 14px; font-weight: 800;
+      border:0; border-radius: 12px; padding: 12px 14px; font-weight: 900;
       background:#2b8cff; color:#001425; cursor:pointer;
     }
     button.secondary { background:#1f2c3e; color:#e8eef6; border:1px solid #2b3c54; }
@@ -26,30 +25,15 @@
     .kpi { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
     .kpi .box { background:#0f1620; border:1px solid #1f2b3b; border-radius: 12px; padding: 12px; }
     .label { opacity:.75; font-size: 12px; }
-    .value { font-size: 22px; font-weight: 900; margin-top: 4px; }
-    input { padding: 10px; border-radius: 10px; border:1px solid #2b3c54; background:#0f1620; color:#e8eef6; width: 100%; }
+    .value { font-size: 22px; font-weight: 1000; margin-top: 4px; }
     table { width:100%; border-collapse: collapse; }
     th, td { padding: 10px; border-bottom: 1px solid #223247; text-align:left; }
     th { font-size: 12px; opacity:.85; }
     .small { font-size: 12px; opacity:.85; line-height: 1.45; }
     .pill { display:inline-block; padding: 4px 10px; border-radius:999px; background:#0f1620; border:1px solid #24344c; font-size:12px; }
-    .bigOverlay {
-      position: fixed; inset: 0; display:none;
-      align-items:center; justify-content:center;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(6px);
-      z-index: 50;
-    }
-    .bigOverlay .num {
-      font-size: 92px; font-weight: 1000; letter-spacing: 2px;
-      padding: 22px 28px; border-radius: 20px;
-      background: rgba(15,22,32,.75); border: 1px solid #2b3c54;
-      text-align:center;
-      min-width: 220px;
-    }
-    .warn { color:#ffb020; font-weight:800; }
-    .bad { color:#ff4d4d; font-weight:900; }
-    .ok { color:#6bff95; font-weight:900; }
+    .warn { color:#ffb020; font-weight:900; }
+    .bad { color:#ff4d4d; font-weight:1000; }
+    .ok { color:#6bff95; font-weight:1000; }
     .hide { display:none !important; }
     .historyItem { background:#0f1620; border:1px solid #223247; border-radius: 12px; padding: 12px; margin: 10px 0; }
     .historyTop { display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
@@ -69,38 +53,8 @@
     <!-- RUN VIEW -->
     <div id="viewRun">
       <div class="card">
-        <h1>RaceBox Web QStart (GPS) — iPhone</h1>
-        <div class="small">
-          Alur: <b>ARM</b> → (auto/klik) <b>PRE-STAGE</b> → (klik) <b>STAGE</b> → <b>START (3-2-1-GO)</b> → gas → auto stop di 500 m.
-          <br/>Tips iPhone: pakai Safari, pastikan halaman <b>HTTPS</b>, lokasi “Precise Location” aktif (kalau ada).
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="grid">
-          <div>
-            <div class="label">Auto Pre-stage jika speed ≤ (km/j)</div>
-            <input id="zeroSpeed" type="number" value="1" min="0" step="0.5"/>
-          </div>
-          <div>
-            <div class="label">Stabil minimal (detik) untuk auto Pre-stage</div>
-            <input id="stableSec" type="number" value="2" min="1" step="1"/>
-          </div>
-          <div>
-            <div class="label">Maks akurasi GPS (m) — titik di atas ini diabaikan</div>
-            <input id="maxAcc" type="number" value="12" min="3" step="1"/>
-          </div>
-          <div>
-            <div class="label">Deteksi glitch: batas speed loncat (km/j)</div>
-            <input id="maxImplied" type="number" value="250" min="80" step="10"/>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:12px;">
+        <div class="row">
           <button id="btnArm">ARM</button>
-          <button id="btnPre" class="secondary" disabled>PRE-STAGE</button>
-          <button id="btnStage" class="secondary" disabled>STAGE</button>
-          <button id="btnStart" disabled>START (3-2-1-GO)</button>
           <button id="btnStop" class="danger" disabled>STOP</button>
           <button id="btnReset" class="secondary">RESET</button>
         </div>
@@ -111,11 +65,11 @@
             <div id="speed" class="value mono">—</div>
           </div>
           <div class="box">
-            <div class="label">Jarak dari start (m)</div>
+            <div class="label">Jarak run (m)</div>
             <div id="distance" class="value mono">0.0</div>
           </div>
           <div class="box">
-            <div class="label">Akurasi (m)</div>
+            <div class="label">Akurasi GPS (m)</div>
             <div id="accuracy" class="value mono">—</div>
           </div>
         </div>
@@ -123,6 +77,11 @@
         <div class="small" style="margin-top:10px;">
           State: <span id="stateText" class="pill">idle</span>
           <span id="hint" class="small" style="margin-left:8px;"></span>
+          <!-- Elemen tersembunyi untuk mencegah JS Error -->
+          <div class="hide">
+            Dist from ARM: <span id="dArm">0</span>
+            Current V: <span id="vNow">0</span>
+          </div>
         </div>
       </div>
 
@@ -130,19 +89,21 @@
         <h1>Hasil (split)</h1>
         <table>
           <thead>
-            <tr><th>Marker</th><th>Jarak</th><th>Waktu</th><th>Catatan</th></tr>
+            <tr><th>Marker</th><th>Jarak</th><th>Waktu</th><th>MAX speed (km/j)</th></tr>
           </thead>
           <tbody>
             <tr><td>60 ft</td><td>18.288 m</td><td id="t60">—</td><td id="n60">—</td></tr>
             <tr><td>201 m</td><td>201 m</td><td id="t201">—</td><td id="n201">—</td></tr>
-            <tr><td>402 m (1/4 mile)</td><td>402 m</td><td id="t402">—</td><td id="n402">—</td></tr>
+            <tr><td>402 m </td><td>402 m</td><td id="t402">—</td><td id="n402">—</td></tr>
             <tr><td>500 m</td><td>500 m</td><td id="t500">—</td><td id="n500">—</td></tr>
+            <tr>
+              <td><b>MAX SPEED</b></td>
+              <td id="maxAt"><b>—</b></td>
+              <td>—</td>
+              <td id="maxSpeed"><b>—</b></td>
+            </tr>
           </tbody>
         </table>
-
-        <div class="small" style="margin-top:10px;">
-          <span class="warn">Catatan:</span> GPS iPhone umumnya 1 Hz–5 Hz. Kalau update jarang, marker bisa “loncat”.
-        </div>
       </div>
     </div>
 
@@ -156,612 +117,198 @@
             <button id="btnClearAll" class="danger">Hapus Semua</button>
           </div>
         </div>
-        <div class="small">History tersimpan lokal di browser (localStorage). Kalau hapus data Safari, history ikut hilang.</div>
+        <div class="small">History tersimpan lokal di browser (localStorage).</div>
       </div>
-
       <div id="historyList"></div>
       <div id="historyEmpty" class="card small">Belum ada run tersimpan.</div>
     </div>
   </div>
 
-  <!-- Countdown overlay -->
-  <div id="overlay" class="bigOverlay">
-    <div id="overlayNum" class="num mono">3</div>
-  </div>
-
 <script>
 (() => {
-  // =============================
-  // Constants / Targets
-  // =============================
+  const V_START_KMH = 5;
+  const D_MIN_METERS = 3;
+  const MAX_ACC_METERS = 12;
+  const MAX_IMPLIED_KMH = 250;
+
   const TARGETS = [
-    { key: "60",  name: "60 ft",  meters: 18.288 },
-    { key: "201", name: "201 m",  meters: 201 },
-    { key: "402", name: "402 m",  meters: 402 },
-    { key: "500", name: "500 m",  meters: 500 },
+    { key: "60",  meters: 18.288 },
+    { key: "201", meters: 201 },
+    { key: "402", meters: 402 },
+    { key: "500", meters: 500 },
   ];
 
-  const HISTORY_KEY = "racebox_qstart_history_v1";
+  const HISTORY_KEY = "racebox_triggerC_history_v1";
 
-  // =============================
-  // UI helpers
-  // =============================
   const el = (id) => document.getElementById(id);
 
-  const tabRun = el("tabRun");
-  const tabHistory = el("tabHistory");
-  const viewRun = el("viewRun");
-  const viewHistory = el("viewHistory");
+  const tabRun = el("tabRun"), tabHistory = el("tabHistory");
+  const viewRun = el("viewRun"), viewHistory = el("viewHistory");
+  const btnArm = el("btnArm"), btnStop = el("btnStop"), btnReset = el("btnReset");
+  const btnExport = el("btnExport"), btnClearAll = el("btnClearAll");
+  const statusEl = el("status"), stateTextEl = el("stateText"), hintEl = el("hint");
+  const speedEl = el("speed"), distEl = el("distance"), accEl = el("accuracy");
+  const dArmEl = el("dArm"), vNowEl = el("vNow");
+  const maxSpeedEl = el("maxSpeed"), maxAtEl = el("maxAt");
+  const historyList = el("historyList"), historyEmpty = el("historyEmpty");
 
-  const btnArm = el("btnArm");
-  const btnPre = el("btnPre");
-  const btnStage = el("btnStage");
-  const btnStart = el("btnStart");
-  const btnStop = el("btnStop");
-  const btnReset = el("btnReset");
-
-  const btnExport = el("btnExport");
-  const btnClearAll = el("btnClearAll");
-
-  const statusEl = el("status");
-  const stateTextEl = el("stateText");
-  const hintEl = el("hint");
-
-  const speedEl = el("speed");
-  const distanceEl = el("distance");
-  const accEl = el("accuracy");
-
-  const zeroSpeedEl = el("zeroSpeed");
-  const stableSecEl = el("stableSec");
-  const maxAccEl = el("maxAcc");
-  const maxImpliedEl = el("maxImplied");
-
-  const overlay = el("overlay");
-  const overlayNum = el("overlayNum");
-
-  const historyList = el("historyList");
-  const historyEmpty = el("historyEmpty");
+  const State = { IDLE: "idle", ARMED: "armed", RUNNING: "running", FINISHED: "finished", STOPPED: "stopped" };
+  let state = State.IDLE, watchId = null, armFix = null, prevFix = null, started = false, startPerf = null, totalDist = 0, hit = new Map(), lastSpeedKmh = 0, maxSpeedKmh = 0, maxSpeedAtM = 0;
 
   function setStatus(s) { statusEl.textContent = s; }
   function setState(s) { stateTextEl.textContent = s; }
+  function setHint(text, kind="") { hintEl.textContent = text || ""; hintEl.className = "small " + (kind || ""); }
+  function fmtTime(ms) { return ms == null ? "—" : (ms/1000).toFixed(3) + " s"; }
+  function fmtNum(n, d=1) { return (n == null || !Number.isFinite(n)) ? "—" : n.toFixed(d); }
 
-  function fmtTime(ms) {
-    if (ms == null) return "—";
-    return (ms / 1000).toFixed(3) + " s";
+  function setCell(key, timeMs, maxSpeedKmh) {
+    if(el("t"+key)) el("t"+key).textContent = fmtTime(timeMs);
+    if(el("n"+key)) el("n"+key).textContent = fmtNum(maxSpeedKmh, 1);
   }
 
-  function setCell(key, timeMs, note) {
-    el("t"+key).textContent = timeMs == null ? "—" : fmtTime(timeMs);
-    el("n"+key).textContent = note ?? "—";
+  function resetTable() {
+    for (const t of TARGETS) setCell(t.key, null, null);
+    maxSpeedEl.textContent = "—"; maxAtEl.textContent = "—";
   }
 
-  function resetResultTable() {
-    for (const t of TARGETS) setCell(t.key, null, "—");
-  }
-
-  // =============================
-  // Geometry / math
-  // =============================
   function haversine(lat1, lon1, lat2, lon2) {
-    const R = 6371000;
-    const toRad = (d) => d * Math.PI / 180;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat/2)**2 +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon/2)**2;
+    const R = 6371000, toRad = (d) => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
     return 2 * R * Math.asin(Math.sqrt(a));
   }
 
-  function interpolateCrossingTime(prevPerf, currPerf, prevDist, currDist, targetDist) {
+  function interpolateCross(prevPerf, currPerf, prevDist, currDist, targetDist) {
     const span = currDist - prevDist;
     if (span <= 1e-6) return currPerf;
-    const ratio = (targetDist - prevDist) / span;
-    const r = Math.max(0, Math.min(1, ratio));
+    const r = Math.max(0, Math.min(1, (targetDist - prevDist)/span));
     return prevPerf + (currPerf - prevPerf) * r;
   }
 
-  // =============================
-  // History
-  // =============================
-  function loadHistory() {
-    try {
-      const raw = localStorage.getItem(HISTORY_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
-    } catch { return []; }
-  }
-
-  function saveHistory(arr) {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
-  }
-
-  function addHistory(runObj) {
-    const arr = loadHistory();
-    arr.unshift(runObj);
-    // keep last 100
-    if (arr.length > 100) arr.length = 100;
-    saveHistory(arr);
-    renderHistory();
-  }
-
-  function deleteHistory(id) {
-    const arr = loadHistory().filter(x => x.id !== id);
-    saveHistory(arr);
-    renderHistory();
-  }
-
-  function clearHistory() {
-    saveHistory([]);
-    renderHistory();
-  }
-
-  function toCSV(rows) {
-    const header = [
-      "id","timestamp_iso","t60_s","t201_s","t402_s","t500_s",
-      "notes","maxAcc_m","zeroSpeed_kmh","stableSec_s"
-    ];
-    const esc = (v) => {
-      const s = String(v ?? "");
-      if (s.includes(",") || s.includes('"') || s.includes("\n")) {
-        return '"' + s.replaceAll('"', '""') + '"';
-      }
-      return s;
-    };
-    const lines = [header.join(",")];
-    for (const r of rows) {
-      const line = [
-        r.id,
-        r.tsISO,
-        r.times?.t60_s ?? "",
-        r.times?.t201_s ?? "",
-        r.times?.t402_s ?? "",
-        r.times?.t500_s ?? "",
-        r.notes ?? "",
-        r.settings?.maxAcc ?? "",
-        r.settings?.zeroSpeed ?? "",
-        r.settings?.stableSec ?? ""
-      ].map(esc).join(",");
-      lines.push(line);
-    }
-    return lines.join("\n");
-  }
-
-  function downloadText(filename, text) {
-    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
+  function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); } catch { return []; } }
+  function saveHistory(arr) { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr)); }
+  function addHistory(obj) { const arr = loadHistory(); arr.unshift(obj); if (arr.length > 100) arr.length = 100; saveHistory(arr); renderHistory(); }
+  function delHistory(id) { saveHistory(loadHistory().filter(x => x.id !== id)); renderHistory(); }
+  function clearHistory() { if(confirm("Hapus semua history?")) { saveHistory([]); renderHistory(); } }
 
   function renderHistory() {
     const arr = loadHistory();
     historyList.innerHTML = "";
     historyEmpty.classList.toggle("hide", arr.length !== 0);
-
-    for (const item of arr) {
+    arr.forEach(it => {
       const div = document.createElement("div");
       div.className = "historyItem";
-
-      const dateStr = new Date(item.tsISO).toLocaleString();
-      const t60 = item.times?.t60_s != null ? item.times.t60_s.toFixed(3) : "—";
-      const t201 = item.times?.t201_s != null ? item.times.t201_s.toFixed(3) : "—";
-      const t402 = item.times?.t402_s != null ? item.times.t402_s.toFixed(3) : "—";
-      const t500 = item.times?.t500_s != null ? item.times.t500_s.toFixed(3) : "—";
-
+      const dateStr = new Date(it.tsISO).toLocaleString();
       div.innerHTML = `
         <div class="historyTop">
           <div>
-            <div style="font-weight:900;">Run • <span class="mono">${dateStr}</span></div>
-            <div class="small mono">60ft: ${t60}s • 201m: ${t201}s • 402m: ${t402}s • 500m: ${t500}s</div>
-            <div class="small">Settings: maxAcc ${item.settings?.maxAcc ?? "?"}m • auto0 ${item.settings?.zeroSpeed ?? "?"}km/j • stabil ${item.settings?.stableSec ?? "?"}s</div>
-            <div class="small">${item.notes ? "Notes: " + item.notes : ""}</div>
+            <div style="font-weight:1000;">Run • <span class="mono">${dateStr}</span></div>
+            <div class="small mono">60ft: ${fmtTime(it.times?.t60_s*1000)} • 201m: ${fmtTime(it.times?.t201_s*1000)}</div>
+            <div class="small mono"><b>MAX:</b> ${fmtNum(it.maxSpeedKmh, 1)} km/j @ ${fmtNum(it.maxSpeedAtM, 1)} m</div>
           </div>
           <div class="row">
-            <button class="secondary" data-act="copy" data-id="${item.id}">Copy</button>
-            <button class="danger" data-act="del" data-id="${item.id}">Hapus</button>
+            <button class="danger" onclick="window._delHist('${it.id}')">Hapus</button>
           </div>
-        </div>
-      `;
+        </div>`;
       historyList.appendChild(div);
-    }
-
-    historyList.querySelectorAll("button[data-act]").forEach(b => {
-      b.addEventListener("click", async () => {
-        const act = b.getAttribute("data-act");
-        const id = b.getAttribute("data-id");
-        const arr2 = loadHistory();
-        const it = arr2.find(x => x.id === id);
-        if (!it) return;
-
-        if (act === "del") {
-          deleteHistory(id);
-        } else if (act === "copy") {
-          const text = `Run ${it.tsISO}
-60ft: ${it.times?.t60_s?.toFixed(3) ?? "—"} s
-201m: ${it.times?.t201_s?.toFixed(3) ?? "—"} s
-402m: ${it.times?.t402_s?.toFixed(3) ?? "—"} s
-500m: ${it.times?.t500_s?.toFixed(3) ?? "—"} s`;
-          try {
-            await navigator.clipboard.writeText(text);
-            b.textContent = "Copied!";
-            setTimeout(() => b.textContent = "Copy", 900);
-          } catch {
-            // fallback
-            downloadText("run.txt", text);
-          }
-        }
-      });
     });
   }
-
-  // =============================
-  // State machine
-  // =============================
-  const State = {
-    IDLE: "idle",
-    ARMED: "armed",
-    PRE: "pre-stage",
-    STAGE: "stage",
-    COUNTDOWN: "countdown",
-    RUNNING: "running",
-    FINISHED: "finished",
-    STOPPED: "stopped",
-  };
-
-  let state = State.IDLE;
-
-  let watchId = null;
-
-  // GPS tracking
-  let lastFix = null;            // previous accepted fix
-  let totalDist = 0;
-  let startPerf = null;          // performance.now at GO
-  let runStartFix = null;        // fix at GO (anchor)
-  let hit = new Map();           // targetKey -> { timeMs, note }
-
-  // speed stability for auto pre-stage
-  let zeroStartPerf = null;      // when we first saw speed <= threshold
-
-  // latest readings (for UI/logic)
-  let lastSpeedKmh = 0;
-  let lastAcc = null;
+  window._delHist = (id) => delHistory(id);
 
   function updateButtons() {
     btnArm.disabled = !(state === State.IDLE || state === State.STOPPED || state === State.FINISHED);
-    btnPre.disabled = !(state === State.ARMED);
-    btnStage.disabled = !(state === State.PRE);
-    btnStart.disabled = !(state === State.STAGE);
     btnStop.disabled = (state === State.IDLE);
   }
 
-  function setHint(text, kind = "") {
-    hintEl.textContent = text || "";
-    hintEl.className = "small " + (kind || "");
-  }
+  function setStateAll(next) { state = next; setState(next); setStatus(next); updateButtons(); }
 
-  function setStateAll(next) {
-    state = next;
-    setState(next);
-    setStatus(next);
-    updateButtons();
-  }
+  function stopWatch() { if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; } }
 
   function resetAll() {
-    stopWatch();
-    state = State.IDLE;
-    lastFix = null;
-    totalDist = 0;
-    startPerf = null;
-    runStartFix = null;
-    hit = new Map();
-    zeroStartPerf = null;
-
-    speedEl.textContent = "—";
-    distanceEl.textContent = "0.0";
-    accEl.textContent = "—";
-
-    resetResultTable();
-    setStateAll(State.IDLE);
-    setHint("");
-  }
-
-  // =============================
-  // GPS handlers
-  // =============================
-  function stopWatch() {
-    if (watchId != null) {
-      navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-    }
-  }
-
-  function acceptFix(accuracy) {
-    const maxAcc = Number(maxAccEl.value || 12);
-    return accuracy == null || accuracy <= maxAcc;
+    stopWatch(); state = State.IDLE; armFix = null; prevFix = null; started = false;
+    startPerf = null; totalDist = 0; hit = new Map(); lastSpeedKmh = 0; maxSpeedKmh = 0; maxSpeedAtM = 0;
+    speedEl.textContent = "—"; distEl.textContent = "0.0"; accEl.textContent = "—";
+    if(dArmEl) dArmEl.textContent = "—"; if(vNowEl) vNowEl.textContent = "—";
+    resetTable(); setStateAll(State.IDLE); setHint("");
   }
 
   function onPosition(pos) {
     const { latitude, longitude, accuracy, speed } = pos.coords;
-
-    lastAcc = accuracy ?? null;
     accEl.textContent = accuracy != null ? accuracy.toFixed(1) : "—";
-
-    // speed m/s -> km/h
     let spKmh = (speed != null && !Number.isNaN(speed)) ? (speed * 3.6) : lastSpeedKmh;
     if (!Number.isFinite(spKmh)) spKmh = 0;
     lastSpeedKmh = spKmh;
-    speedEl.textContent = Number.isFinite(spKmh) ? spKmh.toFixed(1) : "—";
+    speedEl.textContent = spKmh.toFixed(1);
+    if(vNowEl) vNowEl.textContent = spKmh.toFixed(1);
 
-    // ignore bad fixes for logic (still update UI)
-    if (!acceptFix(accuracy)) return;
+    if (accuracy > MAX_ACC_METERS) return;
 
     const perfNow = performance.now();
-    const fix = { lat: latitude, lon: longitude, acc: accuracy ?? null, perfNow };
+    const fix = { lat: latitude, lon: longitude, perfNow };
 
-    // Anti glitch jump
-    if (lastFix) {
-      const dTmp = haversine(lastFix.lat, lastFix.lon, fix.lat, fix.lon);
-      const dt = (fix.perfNow - lastFix.perfNow) / 1000;
-      const implied = dt > 0 ? (dTmp / dt) * 3.6 : 0;
-      const maxImpl = Number(maxImpliedEl.value || 250);
-      if (implied > maxImpl) return;
-    }
-
-    // Auto pre-stage detection (while ARMED)
-    if (state === State.ARMED) {
-      const zeroTh = Number(zeroSpeedEl.value || 1);
-      const stableNeed = Number(stableSecEl.value || 2);
-
-      if (spKmh <= zeroTh) {
-        if (zeroStartPerf == null) zeroStartPerf = perfNow;
-        const stableSec = (perfNow - zeroStartPerf) / 1000;
-        setHint(`Menunggu speed 0 stabil… ${stableSec.toFixed(1)} / ${stableNeed.toFixed(0)} detik`, "warn");
-        if (stableSec >= stableNeed) {
-          setStateAll(State.PRE);
-          setHint("PRE-STAGE (auto). Tekan STAGE saat siap.", "ok");
-        }
-      } else {
-        zeroStartPerf = null;
-        setHint("ARMED. Berhenti stabil untuk auto PRE-STAGE atau tekan PRE-STAGE.", "");
-      }
-    }
-
-    // Running logic
-    if (state === State.RUNNING) {
-      if (!runStartFix) {
-        // first fix after GO
-        runStartFix = fix;
-        lastFix = fix;
-        totalDist = 0;
-        distanceEl.textContent = "0.0";
-        return;
-      }
-
-      const d = haversine(lastFix.lat, lastFix.lon, fix.lat, fix.lon);
-      const prevTotal = totalDist;
-      const currTotal = totalDist + d;
-      totalDist = currTotal;
-      distanceEl.textContent = totalDist.toFixed(1);
-
-      for (const t of TARGETS) {
-        if (hit.has(t.key)) continue;
-        if (totalDist >= t.meters) {
-          const crossPerf = interpolateCrossingTime(lastFix.perfNow, fix.perfNow, prevTotal, totalDist, t.meters);
-          const timeMs = crossPerf - startPerf;
-
-          const noteParts = [];
-          if (fix.acc != null) noteParts.push(`acc ${fix.acc.toFixed(1)}m`);
-          if (Number.isFinite(spKmh)) noteParts.push(`spd ${spKmh.toFixed(1)}km/j`);
-          const note = noteParts.join(" • ") || "ok";
-
-          hit.set(t.key, { timeMs, note });
-          setCell(t.key, timeMs, note);
-        }
-      }
-
-      if (hit.has("500")) {
-        finishRun("finished");
-        stopWatch();
-      }
-
-      lastFix = fix;
+    if (state === State.ARMED && !armFix) {
+      armFix = fix; prevFix = fix;
+      setHint("ARMED: Titik start terkunci. Silakan GAS!", "ok");
       return;
     }
 
-    // Keep lastFix updated when not running (helps anti-glitch)
-    lastFix = fix;
-  }
-
-  function onError(err) {
-    setHint("GPS error: " + err.message, "bad");
-    setStatus("GPS error");
-  }
-
-  function startWatch() {
-    if (!navigator.geolocation) {
-      setHint("Browser tidak mendukung geolocation.", "bad");
-      return false;
-    }
-    if (watchId != null) return true;
-
-    watchId = navigator.geolocation.watchPosition(onPosition, onError, {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 10000
-    });
-    return true;
-  }
-
-  // =============================
-  // Countdown / QStart
-  // =============================
-  function showOverlay(text, isBad=false) {
-    overlay.style.display = "flex";
-    overlayNum.textContent = text;
-    overlayNum.style.borderColor = isBad ? "#ff4d4d" : "#2b3c54";
-  }
-
-  function hideOverlay() {
-    overlay.style.display = "none";
-  }
-
-  async function qstartCountdown() {
-    // False start: if movement detected during countdown, mark bad
-    setStateAll(State.COUNTDOWN);
-    setHint("COUNTDOWN berjalan. Jangan bergerak sebelum GO.", "warn");
-
-    const zeroTh = Number(zeroSpeedEl.value || 1);
-
-    for (const n of [3,2,1]) {
-      const isFalse = lastSpeedKmh > zeroTh + 2; // sedikit toleransi
-      showOverlay(String(n), isFalse);
-      if (isFalse) setHint("FALSE START terdeteksi (speed naik saat countdown)!", "bad");
-      await sleep(1000);
+    if (state === State.ARMED && armFix) {
+      const dFromArm = haversine(armFix.lat, armFix.lon, fix.lat, fix.lon);
+      if(dArmEl) dArmEl.textContent = dFromArm.toFixed(1);
+      if (!started && spKmh >= V_START_KMH && dFromArm >= D_MIN_METERS) {
+        started = true; startPerf = perfNow; totalDist = 0; hit = new Map();
+        maxSpeedKmh = 0; maxSpeedAtM = 0; setStateAll(State.RUNNING);
+        setHint("START!", "ok");
+      }
+      prevFix = fix; return;
     }
 
-    showOverlay("GO", false);
-    await sleep(350);
-    hideOverlay();
-
-    // Start run at GO
-    startPerf = performance.now();
-    runStartFix = null;
-    totalDist = 0;
-    lastFix = null; // will be set when next accepted fix arrives
-    hit = new Map();
-    resetResultTable();
-    distanceEl.textContent = "0.0";
-
-    setStateAll(State.RUNNING);
-    setHint("RUNNING…", "ok");
-  }
-
-  function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
-
-  // =============================
-  // Finish + save history
-  // =============================
-  function finishRun(finalState) {
-    setStateAll(finalState === "finished" ? State.FINISHED : State.STOPPED);
-    setHint(finalState === "finished" ? "Selesai. Tersimpan ke History." : "Dihentikan.", finalState === "finished" ? "ok" : "warn");
-
-    // Save to history (only if we have any hits or we were running)
-    const now = new Date();
-    const times = {
-      t60_s:  hit.get("60")?.timeMs  != null ? hit.get("60").timeMs/1000 : null,
-      t201_s: hit.get("201")?.timeMs != null ? hit.get("201").timeMs/1000 : null,
-      t402_s: hit.get("402")?.timeMs != null ? hit.get("402").timeMs/1000 : null,
-      t500_s: hit.get("500")?.timeMs != null ? hit.get("500").timeMs/1000 : null,
-    };
-
-    const any = Object.values(times).some(v => v != null);
-    if (any) {
-      addHistory({
-        id: crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2),
-        tsISO: now.toISOString(),
-        times,
-        notes: (hit.get("500")?.note ?? ""),
-        settings: {
-          maxAcc: Number(maxAccEl.value || 12),
-          zeroSpeed: Number(zeroSpeedEl.value || 1),
-          stableSec: Number(stableSecEl.value || 2),
+    if (state === State.RUNNING) {
+      const d = haversine(prevFix.lat, prevFix.lon, fix.lat, fix.lon);
+      const prevTotal = totalDist;
+      totalDist += d;
+      distEl.textContent = totalDist.toFixed(1);
+      if (spKmh > maxSpeedKmh) { maxSpeedKmh = spKmh; maxSpeedAtM = totalDist; maxSpeedEl.textContent = fmtNum(maxSpeedKmh, 1); maxAtEl.textContent = fmtNum(maxSpeedAtM, 1) + " m"; }
+      for (const t of TARGETS) {
+        if (!hit.has(t.key) && totalDist >= t.meters) {
+          const crossPerf = interpolateCross(prevFix.perfNow, fix.perfNow, prevTotal, totalDist, t.meters);
+          const timeMs = crossPerf - startPerf;
+          hit.set(t.key, { timeMs });
+          setCell(t.key, timeMs, maxSpeedKmh);
         }
-      });
+      }
+      if (hit.has("500")) { finishRun(true); stopWatch(); }
+      prevFix = fix;
     }
   }
 
-  // =============================
-  // Actions
-  // =============================
-  function arm() {
+  function finishRun(isFinished) {
+    setStateAll(isFinished ? State.FINISHED : State.STOPPED);
+    const times = {
+      t60_s: hit.get("60")?.timeMs/1000 || null,
+      t201_s: hit.get("201")?.timeMs/1000 || null,
+      t402_s: hit.get("402")?.timeMs/1000 || null,
+      t500_s: hit.get("500")?.timeMs/1000 || null,
+    };
+    if (Object.values(times).some(v => v != null)) {
+      addHistory({ id: Date.now().toString(), tsISO: new Date().toISOString(), times, maxSpeedKmh, maxSpeedAtM });
+    }
+  }
+
+  btnArm.addEventListener("click", () => {
     resetAll();
-    const ok = startWatch();
-    if (!ok) return;
-
+    if (!navigator.geolocation) return alert("GPS tidak didukung browser ini.");
+    watchId = navigator.geolocation.watchPosition(onPosition, (e) => setHint("GPS Error: " + e.message, "bad"), { enableHighAccuracy: true });
     setStateAll(State.ARMED);
-    setHint("ARMED. Berhenti stabil untuk auto PRE-STAGE atau tekan PRE-STAGE.", "");
-  }
+    setHint("Mencari sinyal GPS...", "warn");
+  });
 
-  function preStageManual() {
-    if (state !== State.ARMED) return;
-    setStateAll(State.PRE);
-    setHint("PRE-STAGE (manual). Tekan STAGE saat siap.", "ok");
-  }
-
-  function stageManual() {
-    if (state !== State.PRE) return;
-    setStateAll(State.STAGE);
-    setHint("STAGE. Tekan START untuk countdown 3-2-1-GO.", "ok");
-  }
-
-  async function startQStart() {
-    if (state !== State.STAGE) return;
-
-    // Ensure GPS watch is running
-    if (!startWatch()) return;
-
-    // Run countdown
-    await qstartCountdown();
-  }
-
-  function stop() {
-    if (state === State.IDLE) return;
-    stopWatch();
-    if (state === State.RUNNING || state === State.COUNTDOWN || state === State.STAGE || state === State.PRE || state === State.ARMED) {
-      finishRun("stopped");
-    } else {
-      setStateAll(State.STOPPED);
-    }
-  }
-
-  // =============================
-  // Tabs
-  // =============================
-  function showRun() {
-    tabRun.classList.add("active");
-    tabHistory.classList.remove("active");
-    viewRun.classList.remove("hide");
-    viewHistory.classList.add("hide");
-  }
-  function showHistory() {
-    tabHistory.classList.add("active");
-    tabRun.classList.remove("active");
-    viewHistory.classList.remove("hide");
-    viewRun.classList.add("hide");
-    renderHistory();
-  }
-
-  // =============================
-  // Wire up UI
-  // =============================
-  btnArm.addEventListener("click", arm);
-  btnPre.addEventListener("click", preStageManual);
-  btnStage.addEventListener("click", stageManual);
-  btnStart.addEventListener("click", startQStart);
-  btnStop.addEventListener("click", stop);
+  btnStop.addEventListener("click", () => { stopWatch(); finishRun(false); });
   btnReset.addEventListener("click", resetAll);
-
-  tabRun.addEventListener("click", showRun);
-  tabHistory.addEventListener("click", showHistory);
-
-  btnClearAll.addEventListener("click", () => {
-    clearHistory();
-  });
-
-  btnExport.addEventListener("click", () => {
-    const arr = loadHistory();
-    const csv = toCSV(arr);
-    downloadText("racebox_history.csv", csv);
-  });
-
-  // Initial
+  tabRun.addEventListener("click", () => { tabRun.classList.add("active"); tabHistory.classList.remove("active"); viewRun.classList.remove("hide"); viewHistory.classList.add("hide"); });
+  tabHistory.addEventListener("click", () => { tabHistory.classList.add("active"); tabRun.classList.remove("active"); viewHistory.classList.remove("hide"); viewRun.classList.add("hide"); renderHistory(); });
+  btnClearAll.addEventListener("click", clearHistory);
+  
   resetAll();
   renderHistory();
 })();
